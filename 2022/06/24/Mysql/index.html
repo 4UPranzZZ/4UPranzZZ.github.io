@@ -614,14 +614,14 @@ ORDE">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2022-06-24
+                    2022-06-27
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    870
+                    1k
                 </div>
                 
 
@@ -723,8 +723,8 @@ LIMIT
 <pre class="line-numbers language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span> 根据部门和工作分组</span>
 <span class="token list punctuation">-</span>     select count(empno),job,deptno
 <span class="token code keyword">    from `emp`</span>
-  GROUP BY deptno,job
-  (将deptno,job互换顺序结果不变)
+<span class="token code keyword">    GROUP BY deptno,job</span>
+   (将deptno,job互换顺序结果不变)
 
 <span class="token title important"><span class="token punctuation">#</span> 根据部门分组之后根据最高工资>2900的条件筛选</span>
 <span class="token list punctuation">-</span>     select max(sal),deptno
@@ -745,11 +745,6 @@ LIMIT
 <span class="token code keyword">    GROUP BY deptno</span>
 <span class="token code keyword">    HAVING count(empno) > 3    </span>
     
-<span class="token title important"><span class="token punctuation">#</span> 选出员工人数大于3的部门    </span>
-<span class="token list punctuation">-</span>     select deptno,count(empno)
-<span class="token code keyword">    from `emp`</span>
-<span class="token code keyword">    GROUP BY deptno</span>
-<span class="token code keyword">    HAVING count(empno) > 3        </span>
     
 <span class="token title important"><span class="token punctuation">#</span> 选出高于平均工资的员工</span>
 <span class="token list punctuation">-</span>    select ename,sal
@@ -762,7 +757,7 @@ LIMIT
 <span class="token code keyword">    from emp</span>
 <span class="token code keyword">    where HIREDATE > (select HIREDATE</span>
 <span class="token code keyword">        from emp where EMPNO = 1234)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <pre class="line-numbers language-markdown"><code class="language-markdown">注意事项:
 • 分组之后，查询的字段一般为聚合函数和分组字段，查询其他字段无任何意义。
 • 执行顺序: where > 聚合函数 > having 。
@@ -797,7 +792,49 @@ LIMIT
 <span class="token title important"><span class="token punctuation">#</span>  根据年龄对公司的员工进行升序排序 , 年龄相同 , 再按照入职时间进行降序排序</span>
 <span class="token list punctuation">-</span> select * from emp order by age asc , entrydate desc; 
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="1-7分页查询"><a href="#1-7分页查询" class="headerlink" title="1.7分页查询"></a>1.7分页查询</h2><h2 id="1-8案例"><a href="#1-8案例" class="headerlink" title="1.8案例"></a>1.8案例</h2><h2 id="1-9执行顺序"><a href="#1-9执行顺序" class="headerlink" title="1.9执行顺序"></a>1.9执行顺序</h2>
+<h2 id="1-7分页查询"><a href="#1-7分页查询" class="headerlink" title="1.7分页查询"></a>1.7分页查询</h2><h2 id="1-8案例"><a href="#1-8案例" class="headerlink" title="1.8案例"></a>1.8案例</h2><h2 id="1-9执行顺序"><a href="#1-9执行顺序" class="headerlink" title="1.9执行顺序"></a>1.9执行顺序</h2><h1 id="2-多表查询"><a href="#2-多表查询" class="headerlink" title="2.多表查询"></a>2.多表查询</h1><h2 id="2-1子查询"><a href="#2-1子查询" class="headerlink" title="2.1子查询"></a>2.1子查询</h2><h3 id="２-１-１单行子查询"><a href="#２-１-１单行子查询" class="headerlink" title="２.１.１单行子查询"></a>２.１.１单行子查询</h3><pre class="line-numbers language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span> 查询和员工编号是7788相同并且工资大于等于他工资的员工编号</span>
+<span class="token list punctuation">-</span>  select ename,sal,deptno
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where sal>=(select sal</span>
+<span class="token code keyword">                from emp </span>
+<span class="token code keyword">                where empno = 7788)    </span>
+<span class="token code keyword">                  and </span>
+<span class="token code keyword">            　　 deptno=(select deptno</span>
+<span class="token code keyword">                from emp </span>
+<span class="token code keyword">                where empno = 7788)</span>
+<span class="token code keyword">                 </span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="２-１-２多行子查询"><a href="#２-１-２多行子查询" class="headerlink" title="２.１.２多行子查询"></a>２.１.２多行子查询</h3><pre class="line-numbers language-markdown"><code class="language-markdown">注意事项：
+ｉｎ　是替换　＝
+＞all　　＞最大
+＞any　　＞最小
+＜all　　＜最小
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p>ｎｏｔ　ｉｎ子查询中包含控股之，最终主查询无返回结果</p>
+</blockquote>
+<pre class="line-numbers language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span> 查询工作在NEW YORK的员工</span>
+<span class="token list punctuation">-</span>  SELECT ENAME ,DEPTNO
+   from emp 
+   where deptno = (select    DEPTNO
+<span class="token code keyword">                    from dept</span>
+<span class="token code keyword">                    where loc = 'NEW YORK')    </span>
+<span class="token code keyword">                    </span>
+<span class="token title important"><span class="token punctuation">#</span>  哪个部门的最低工资最高</span>
+<span class="token list punctuation">-</span>  select deptno,min(sal)
+   from emp
+   GROUP BY DEPTNO
+   having min(sal) >=all(select min(sal)
+<span class="token code keyword">                        from em                                                    GROUP BY deptno)</span>
+<span class="token title important"><span class="token punctuation">#</span> 哪个部门的人数最多</span>
+<span class="token list punctuation">-</span>  select deptno "部门号",count(empno) "部门人数"
+   from emp
+   GROUP BY deptno
+   having count(empno) >=all(select count(empno) 
+<span class="token code keyword">                             from   emp</span>
+<span class="token code keyword">                             GROUP BY deptno)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
                 
             </div>
             <hr/>
@@ -1036,18 +1073,17 @@ LIMIT
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/06/24/Mysql/">
+                <a href="/2022/06/27/Git/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="Mysql">
+                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="Git">
                         
-                        <span class="card-title">Mysql</span>
+                        <span class="card-title">Git</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -1057,9 +1093,9 @@ LIMIT
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-06-24
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-06-27
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -1067,15 +1103,6 @@ LIMIT
                             
                         </span>
                     </div>
-                </div>
-
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/Mysql/">
-                        <span class="chip bg-color">Mysql</span>
-                    </a>
-                    
                 </div>
                 
             </div>

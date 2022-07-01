@@ -614,14 +614,14 @@ ORDE">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2022-06-28
+                    2022-07-01
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.3k
+                    1.7k
                 </div>
                 
 
@@ -756,7 +756,22 @@ LIMIT
    from emp
    where HIREDATE > (select HIREDATE
 <span class="token code keyword">        from emp where EMPNO = 1234)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token code keyword">        </span>
+<span class="token title important"><span class="token punctuation">#</span>  查询部门人数大于2的部门编号，部门名称，部门人数</span>
+<span class="token list punctuation">-</span>  select d.deptno,d.dname,count(empno)
+   from emp e,dept d
+   WHERE e.DEPTNO = d.DEPTNO
+   GROUP BY d.deptno
+   having count(e.empno) > 2
+    
+<span class="token title important"><span class="token punctuation">#</span>  查询部门平均工资大于2000，且人数大于2的部门编号，部门名称，部门人数，部门平均工资，并按部门人数升序排序</span>
+<span class="token list punctuation">-</span>  select e.deptno,d.dname,count(empno),avg(e.sal)
+   from emp e,dept d
+   where e.deptno = d.deptno
+   group by e.deptno
+   having avg(e.sal) > 2000 and count(e.empno)
+   ORDER BY count(e.empno) ASC
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <pre class="line-numbers language-markdown"><code class="language-markdown">注意事项:
 • 分组之后，查询的字段一般为聚合函数和分组字段，查询其他字段无任何意义。
 • 执行顺序: where > 聚合函数 > having 。
@@ -804,7 +819,45 @@ LIMIT
 <span class="token code keyword">                from emp </span>
 <span class="token code keyword">                where empno = 7788)</span>
 <span class="token code keyword">                 </span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token title important"><span class="token punctuation">#</span> 查询工作在NEW YORK的员工</span>
+<span class="token list punctuation">-</span>  SELECT ENAME ,DEPTNO
+   from emp 
+   where deptno = (select    DEPTNO
+<span class="token code keyword">                    from dept</span>
+<span class="token code keyword">                    where loc = 'NEW YORK')    </span>
+<span class="token code keyword">                    </span>
+<span class="token title important"><span class="token punctuation">#</span>  查询出比JONES雇员工资高的其他雇员</span>
+<span class="token list punctuation">-</span>   select ename,sal
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where sal > (select sal from emp where ename='JONES')</span>
+    
+    
+<span class="token title important"><span class="token punctuation">#</span>  查询和雇员7369从事相同工作并且工资大于雇员7876的雇员的姓名和工作</span>
+<span class="token list punctuation">-</span>   select ename,job
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where job = (select job from emp where empno =7369)</span>
+<span class="token code keyword">    and</span>
+<span class="token code keyword">    sal>(select sal from emp where empno = 7369)</span>
+    
+    
+<span class="token code keyword">    //子查询中使用组函数</span>
+
+<span class="token title important"><span class="token punctuation">#</span>   查询工资最低的员工姓名，岗位和工资</span>
+<span class="token list punctuation">-</span>   select ename,job,sal
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where sal = (select min(sal)</span>
+<span class="token code keyword">    from emp)</span>
+
+<span class="token title important"><span class="token punctuation">#</span>   查询部门最低工资比20部门最低工资高的部门编号及最低工资</span>
+<span class="token list punctuation">-</span>    select deptno,min(sal)
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    group by deptno</span>
+<span class="token code keyword">    having min(sal) > (</span>
+<span class="token code keyword">                select min(sal)</span>
+<span class="token code keyword">                from emp</span>
+<span class="token code keyword">                where deptno = 20</span>
+<span class="token code keyword">               )</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="２-１-２多行子查询"><a href="#２-１-２多行子查询" class="headerlink" title="２.１.２多行子查询"></a>２.１.２多行子查询</h3><pre class="line-numbers language-java"><code class="language-java">in，any <span class="token punctuation">,</span>all
 <span class="token operator">></span>all <span class="token operator">></span>最大
 <span class="token operator">></span>any <span class="token operator">></span>最小
@@ -816,39 +869,32 @@ LIMIT
 <blockquote>
 <p>not in子查询中包含空值，最终主查询无返回结果</p>
 </blockquote>
-<pre class="line-numbers language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span> 查询工作在NEW YORK的员工</span>
-<span class="token list punctuation">-</span>  SELECT ENAME ,DEPTNO
-   from emp 
-   where deptno = (select    DEPTNO
-<span class="token code keyword">                    from dept</span>
-<span class="token code keyword">                    where loc = 'NEW YORK')    </span>
-<span class="token code keyword">                    </span>
-<span class="token title important"><span class="token punctuation">#</span>  哪个部门的最低工资最高</span>
-<span class="token list punctuation">-</span>  select deptno,min(sal)
-   from emp
-   GROUP BY DEPTNO
-   having min(sal) >=all(select min(sal)
+<pre class="line-numbers language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span>  哪个部门的最低工资最高</span>
+<span class="token list punctuation">-</span>   select deptno,min(sal)
+<span class="token code keyword">      from emp</span>
+<span class="token code keyword">      GROUP BY DEPTNO</span>
+<span class="token code keyword">    having min(sal) >=all(select min(sal)</span>
 <span class="token code keyword">                        from em                                                    GROUP BY deptno)</span>
 <span class="token title important"><span class="token punctuation">#</span>  哪个部门的人数最多</span>
-<span class="token list punctuation">-</span>  select deptno "部门号",count(empno) "部门人数"
-   from emp
-   GROUP BY deptno
-   having count(empno) >=all(select count(empno) 
+<span class="token list punctuation">-</span>   select deptno "部门号",count(empno) "部门人数"
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    GROUP BY deptno</span>
+<span class="token code keyword">    having count(empno) >=all(select count(empno) </span>
 <span class="token code keyword">                             from   emp</span>
 <span class="token code keyword">                             GROUP BY deptno)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="2-2多表关系"><a href="#2-2多表关系" class="headerlink" title="2.2多表关系"></a>2.2多表关系</h2><h3 id="2-2-1一对一关系"><a href="#2-2-1一对一关系" class="headerlink" title="2.2.1一对一关系"></a>2.2.1一对一关系</h3><blockquote>
 <p>等值连接</p>
 </blockquote>
 <pre class="line-numbers language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span>  查询员工表的员工名和部门表的部门名</span>
-<span class="token list punctuation">-</span>  select e.ename,d.dname
-   from emp e,dept d
-   where e.deptno = d.deptno
+<span class="token list punctuation">-</span>   select e.ename,d.dname
+<span class="token code keyword">    from emp e,dept d</span>
+<span class="token code keyword">    where e.deptno = d.deptno</span>
    
 <span class="token title important"><span class="token punctuation">#</span> 工作在 NEW YORK 的员工姓名，部门名，部门编号  </span>
-<span class="token list punctuation">-</span>  select e.ename,d.dname,e.deptno
-   from emp e,dept d
-   where e.deptno = d.deptno
+<span class="token list punctuation">-</span>   select e.ename,d.dname,e.deptno
+<span class="token code keyword">    from emp e,dept d</span>
+<span class="token code keyword">    where e.deptno = d.deptno</span>
 <span class="token code keyword">         and</span>
 <span class="token code keyword">         d.loc = "NEW YORK"</span>
 <span class="token code keyword">         </span>
@@ -864,8 +910,12 @@ LIMIT
    where e.sal > a.avgsal  
    and 
 <span class="token code keyword">         e.deptno = a.deptno</span>
-<span class="token code keyword">                        </span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token title important"><span class="token punctuation">#</span>  查询员工名、部门名、工资级别（三表）</span>
+<span class="token list punctuation">-</span>   select e.ename,d.dname,s.grade
+<span class="token code keyword">    from emp e,dept d,salgrade s</span>
+<span class="token code keyword">    where e.deptno = d.deptno </span>
+<span class="token code keyword">     、and (e.sal between s.losal and s.    hisal)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <blockquote>
 <p>不等值连接</p>
 </blockquote>
@@ -874,6 +924,13 @@ LIMIT
    from emp e,salgrade s
    where e.sal between s.losal and s.hisal
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="2-2-2一对多关系"><a href="#2-2-2一对多关系" class="headerlink" title="2.2.2一对多关系"></a>2.2.2一对多关系</h3><h3 id="2-2-3多对多关系"><a href="#2-2-3多对多关系" class="headerlink" title="2.2.3多对多关系"></a>2.2.3多对多关系</h3><h1 id="3-自连接"><a href="#3-自连接" class="headerlink" title="3.自连接"></a>3.自连接</h1><pre class="line-numbers language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">#</span>  查询工作时间比自己经理早的员工</span>
+<span class="token list punctuation">-</span>   select distinct worker.ename "员工",worker.hiredate,manager.ename     "经理",manager.hiredate
+<span class="token code keyword">    from emp worker,emp manager </span>
+<span class="token code keyword">    where worker.hiredate &lt; manager.hiredate</span>
+<span class="token code keyword">    and</span>
+<span class="token code keyword">    worker.mgr = manager.empno</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
                 
             </div>

@@ -614,14 +614,14 @@ ORDE">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2022-07-01
+                    2022-07-02
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.7k
+                    2k
                 </div>
                 
 
@@ -855,16 +855,23 @@ LIMIT
 <span class="token code keyword">    having min(sal) > (</span>
 <span class="token code keyword">                select min(sal)</span>
 <span class="token code keyword">                from emp</span>
-<span class="token code keyword">                where deptno = 20</span>
-<span class="token code keyword">               )</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token code keyword">                where deptno = 20)</span>
+<span class="token code keyword">            </span>
+<span class="token title important"><span class="token punctuation">#</span>    查询显示和员工SMITH工作在同一个部门的员工姓名，雇佣日期，查询结果中排除SMITH</span>
+<span class="token list punctuation">-</span>    select ename,HIREDATE
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where deptno = (select deptno ename</span>
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where ename="SMITH")</span>
+<span class="token code keyword">    and ename &lt;> "SMITH"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="２-１-２多行子查询"><a href="#２-１-２多行子查询" class="headerlink" title="２.１.２多行子查询"></a>２.１.２多行子查询</h3><pre class="line-numbers language-java"><code class="language-java">in，any <span class="token punctuation">,</span>all
-<span class="token operator">></span>all <span class="token operator">></span>最大
-<span class="token operator">></span>any <span class="token operator">></span>最小
-<span class="token operator">&lt;</span>all <span class="token operator">&lt;</span>最小
-<span class="token operator">&lt;</span>any <span class="token operator">&lt;</span>最大
-<span class="token operator">=</span>any in
-<span class="token operator">=</span>all 没意义
+<span class="token operator">></span>all    <span class="token operator">></span>最大
+<span class="token operator">></span>any    <span class="token operator">></span>最小
+<span class="token operator">&lt;</span>all    <span class="token operator">&lt;</span>最小
+<span class="token operator">&lt;</span>any    <span class="token operator">&lt;</span>最大
+<span class="token operator">=</span>any    in
+<span class="token operator">=</span>all    没意义
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <blockquote>
 <p>not in子查询中包含空值，最终主查询无返回结果</p>
@@ -882,7 +889,42 @@ LIMIT
 <span class="token code keyword">    having count(empno) >=all(select count(empno) </span>
 <span class="token code keyword">                             from   emp</span>
 <span class="token code keyword">                             GROUP BY deptno)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token code keyword">                             </span>
+<span class="token code keyword">                    </span>
+<span class="token title important"><span class="token punctuation">#</span>   查询是经理的员工姓名，工资</span>
+<span class="token list punctuation">-</span>    select ename,sal
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where empno  in (select mgr from emp )</span>
+    
+    
+<span class="token title important"><span class="token punctuation">#</span>   查询是经理的员工姓名，工资</span>
+<span class="token list punctuation">-</span>   select ename,sal
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where empno = ANY(select mgr from emp)</span>
+    
+    
+<span class="token title important"><span class="token punctuation">#</span>   查询不是经理的员工姓名，工资</span>
+<span class="token list punctuation">-</span>    select ename,sal
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where empno not in (select mgr from emp )</span>
+    
+    
+<span class="token title important"><span class="token punctuation">#</span>   查询部门编号不为10，且工资比10部门任意一名员工工资高的员工编号，姓名，职位，工资</span>
+<span class="token list punctuation">-</span>   select empno,ename,job,sal
+<span class="token code keyword">    from emp</span>
+<span class="token code keyword">    where sal > ANY(select sal from emp where deptno =10)</span>
+<span class="token code keyword">    and</span>
+<span class="token code keyword">    deptno &lt;>10</span>
+<span class="token code keyword">        </span>
+<span class="token title important"><span class="token punctuation">#</span>   查询比自己部门平均工资高的员工姓名，工资，部门编号，部门平均工资 </span>
+<span class="token list punctuation">-</span>    select e.ename,e.sal,e.deptno,a.avgsal
+<span class="token code keyword">    from emp e,(select deptno,avg(sal) avgsal</span>
+<span class="token code keyword">                        from emp </span>
+<span class="token code keyword">                        group by deptno) a</span>
+<span class="token code keyword">    where e.deptno = a.deptno</span>
+<span class="token code keyword">    and</span>
+<span class="token code keyword">           e.sal > a.avgsal</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="2-2多表关系"><a href="#2-2多表关系" class="headerlink" title="2.2多表关系"></a>2.2多表关系</h2><h3 id="2-2-1一对一关系"><a href="#2-2-1一对一关系" class="headerlink" title="2.2.1一对一关系"></a>2.2.1一对一关系</h3><blockquote>
 <p>等值连接</p>
 </blockquote>
@@ -931,6 +973,17 @@ LIMIT
 <span class="token code keyword">    and</span>
 <span class="token code keyword">    worker.mgr = manager.empno</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h1 id="4-DML"><a href="#4-DML" class="headerlink" title="4.DML"></a>4.DML</h1><pre><code>update 子表
+set deptno = ？2
+where deptno = ？1
+
+？2：改为父表中不存在的（主键，不能重，不能空）
+？1：子表中不存在的（外键）
+
+delete from dept
+where deptno = ?
+删父表数据：子表中不存在的（外键）
+</code></pre>
 
                 
             </div>
@@ -1682,12 +1735,12 @@ $(function () {
     <script src="/libs/instantpage/instantpage.js" type="module"></script>
     
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":135,"height":360},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script><script>
+<script>
             window.imageLazyLoadSetting = {
                 isSPA: false,
                 preloadRatio: 1,
                 processImages: null,
             };
-        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":135,"height":360},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 
 </html>

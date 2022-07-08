@@ -598,14 +598,14 @@ Redis单线程，单进程   线程安全 效">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2022-07-03
+                    2022-07-08
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.1k
+                    5.2k
                 </div>
                 
 
@@ -1174,7 +1174,8 @@ vim redis.conf    修改port为7000
 Redis 提供两种持久化机制 RDB（默认） 和 AOF 机制:
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="RDB-快照持久化"><a href="#RDB-快照持久化" class="headerlink" title="RDB(快照持久化)"></a>RDB(快照持久化)</h2><p>是Redis DataBase缩写快照</p>
-<p>RDB是Redis默认的持久化方式。按照一定的时间将内存的数据以快照的形式保存到硬盘中，对应产生的数据文件为dump.rdb。通过配置文件中的save参数来定义快照的周期。</p>
+<p>RDB是Redis<strong>默认的持久化方式</strong>。按照一定的时间将内存的数据以快照的形式保存到硬盘中，对应产生的数据文件为dump.rdb。通过配置文件中的save参数来定义快照的周期。</p>
+<p><img src="/loading.gif" data-original="https://cdn.jsdelivr.net/gh/4UPranzZZ/images/Image/202207081908027.png"></p>
 <ul>
 <li>客户端方式：BGSAVE和SAVE指令</li>
 <li>服务器配置自动触发</li>
@@ -1216,9 +1217,9 @@ server.conf
 #
 <span class="token title important"><span class="token punctuation">#</span> You can set these explicitly by uncommenting the three following lines.</span>
 #
- save 3600 1
- save 300 100
- save 60 10000
+ save 3600 1       //在3600秒内 插入一个key（就发生一次快照）
+ save 300 100        //在300秒内插入至少100个key（就发生一次快照）
+ save 60 10000        //在60秒内插入至少10000的key（就发生一次快照）
 
 <span class="token title important"><span class="token punctuation">#</span> By default Redis will stop accepting writes if RDB snapshots are enabled</span>
 <span class="token title important"><span class="token punctuation">#</span> (at least one save point) and the latest background save failed.</span>
@@ -1235,6 +1236,7 @@ server.conf
 a.修改 appendonly yes 开启持久化
 b.修改 appendfilename "appendonly.aof" 指定生成文件名称
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>RDB的缺点：如果刚刚执行完一次快照，之后马上又又新数据插入进来，此时没有达到下一次执行快照的条件，这时突然宕机，那么新插入的数据就会丢失s</p>
 <h3 id="日志追加频率"><a href="#日志追加频率" class="headerlink" title="日志追加频率"></a>日志追加频率</h3><pre class="line-numbers language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">##</span> 1.always 【谨慎使用】</span>
 <span class="token list punctuation">-</span> 说明: 每个redis写命令都要同步写入硬盘,严重降低redis速度
 <span class="token list punctuation">-</span> 解释: 如果用户使用了always选项,那么每个redis写命令都会被写入硬盘,从而将发生系统崩溃时出现的数据丢失减到最少;遗憾的是,因为这种同步策略需要对硬盘进行大量的写入操作,所以redis处理命令的速度会受到硬盘性能的限制;

@@ -9,7 +9,7 @@ document.addEventListener('visibilitychange', function () {
     }
     else {
         $('[rel="icon"]').attr('href', "/favicon.ico");
-        document.title = '然z' + OriginTitle;
+        document.title = OriginTitle;
         titleTime = setTimeout(function () {
             document.title = OriginTitle;
         }, 2000);

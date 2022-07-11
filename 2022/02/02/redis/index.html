@@ -598,14 +598,14 @@ Redis单线程，单进程   线程安全 效">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2022-07-08
+                    2022-07-10
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.2k
+                    5.5k
                 </div>
                 
 
@@ -1306,6 +1306,56 @@ RDB性能比AOF好
 
 2.无论使用AOF还是快照机制持久化,将数据持久化到硬盘都是有必要的,除了持久化外,用户还应该对持久化的文件进行备份(最好备份在多个不同地方)。
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h1 id="6-Java操作Redis"><a href="#6-Java操作Redis" class="headerlink" title="6.Java操作Redis"></a>6.Java操作Redis</h1><h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ol>
+<li><h3 id="引入依赖"><a href="#引入依赖" class="headerlink" title="引入依赖"></a>引入依赖</h3><pre class="line-numbers language-xml"><code class="language-xml"> <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>redis.clients<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>jedis<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>2.9.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+</li>
+<li><p>创建Jedis对象</p>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">import</span> java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>Set<span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> redis<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>jedis<span class="token punctuation">.</span>Jedis<span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">//测试redis连接</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TestRedis</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+         
+        <span class="token comment" spellcheck="true">//创建jedis客户端对象</span>
+        Jedis jedis <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Jedis</span><span class="token punctuation">(</span><span class="token string">"192.168.76.5"</span><span class="token punctuation">,</span><span class="token number">6379</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+        <span class="token comment" spellcheck="true">//选择使用一个库  默认是0库</span>
+<span class="token comment" spellcheck="true">//        jedis.select(0);</span>
+<span class="token comment" spellcheck="true">//        //验证密码</span>
+        jedis<span class="token punctuation">.</span><span class="token function">auth</span><span class="token punctuation">(</span><span class="token string">"root"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment" spellcheck="true">//测试是否ping通</span>
+<span class="token comment" spellcheck="true">//        System.out.println(jedis.ping());</span>
+<span class="token comment" spellcheck="true">//        //获取redis中所有key信息</span>
+        Set<span class="token operator">&lt;</span>String<span class="token operator">></span> keys <span class="token operator">=</span> jedis<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span><span class="token string">"*"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        keys<span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span>key <span class="token operator">-</span><span class="token operator">></span> System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"key = "</span><span class="token operator">+</span>key<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">//        </span>
+<span class="token comment" spellcheck="true">//        //释放资源</span>
+        jedis<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>遇到的问题：</p>
+<p>用java操作redis需要开启远程连接</p>
+<pre class="line-numbers language-markdown"><code class="language-markdown">（1）修改配置文件redis.conf:
+<span class="token code keyword">    把下面属性进行修改，因为我们是需要进行远程连接的：</span>
+<span class="token code keyword">    bind:127.0.0.1 ------>bind:0.0.0.0   (允许所有远程连接)</span>
+（2）将protected-mode 设置为no
+<span class="token code keyword">    protected-mode no</span>
+（3）设置为允许后台连接
+<span class="token code keyword">    daemonize yes</span>
+（4）有的远程连接需要密码：
+<span class="token code keyword">    设置密码</span>
+<span class="token code keyword">        在redis.conf的SECURITY下默认有#password foobared，把#去            掉，修改为password root,root就是设置的密码，但是在启动redis客          户端后需要使用 auth root 登录</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+</li>
+</ol>
 
                 
             </div>
